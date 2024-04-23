@@ -1,4 +1,6 @@
 
+using Cake.Common.Tools.GitVersion;
+
 namespace BuildScripts;
 
 public enum ProjectType
@@ -20,7 +22,9 @@ public class BuildContext : FrostingContext
         var repositoryUrl = context.Argument("build-repository", DefaultRepositoryUrl);
         var buildConfiguration = context.Argument("build-configuration", "Release");
         BuildOutput = context.Argument("build-output", "artifacts");
-        Version = context.Argument("build-version", DefaultBaseVersion + ".1-develop");
+
+        var gitVersion = context.GitVersion();
+        Version = context.Argument("build-version", DefaultBaseVersion + gitVersion.PreReleaseTagWithDash);
         NuGetsDirectory = $"{BuildOutput}/NuGet/";
 
         if (context.BuildSystem().IsRunningOnGitHubActions)
